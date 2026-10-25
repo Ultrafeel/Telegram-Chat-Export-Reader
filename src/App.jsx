@@ -9,6 +9,7 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [chatTitle, setChatTitle] = useState('');
   const [chatSelection, setChatSelection] = useState(null);
+  const [showChatPicker, setShowChatPicker] = useState(false);
   const [selectedChatIndex, setSelectedChatIndex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -33,6 +34,7 @@ const App = () => {
     setProgress(0);
     setMessages([]);
     setChatSelection(null);
+    setShowChatPicker(false);
     setSelectedChatIndex(null);
     
     const firstPath = files[0].webkitRelativePath;
@@ -63,6 +65,7 @@ const App = () => {
           setMessages(parsed.messages);
         } else {
           setChatSelection({ data, files, chats });
+          setShowChatPicker(true);
         }
       } catch (error) {
         console.error('Failed to parse Telegram JSON export:', error);
@@ -123,14 +126,15 @@ const App = () => {
     setProgress(0);
   };
 
-  const handleOpenSelectedChat = async () => {
-    if (!chatSelection || selectedChatIndex === null) return;
+  const handleOpenSelectedChat = async (chatIndex = selectedChatIndex) => {
+    if (!chatSelection || chatIndex === null) return;
+    setSelectedChatIndex(chatIndex);
     setLoading(true);
     try {
-      const parsed = await parseJsonExport(chatSelection.data, chatSelection.files, selectedChatIndex);
+      const parsed = await parseJsonExport(chatSelection.data, chatSelection.files, chatIndex);
       setChatTitle(parsed.title);
       setMessages(parsed.messages);
-      setChatSelection(null);
+      setShowChatPicker(false);
     } catch (error) {
       console.error('Failed to parse Telegram JSON export:', error);
       alert('Could not read this chat from the Telegram JSON export.');
@@ -143,32 +147,32 @@ const App = () => {
     <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col app-shell">
       <ChatHeader 
         chatTitle={chatTitle} 
+        chats={chatSelection?.chats}
+        selectedChatIndex={selectedChatIndex}
+        onSelectChat={index => handleOpenSelectedChat(Number(index))}
+        isLoading={loading}
         isDarkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(prevMode => !prevMode)}
         onLoadClick={() => fileInputRef.current?.click()} 
       />
 
-      {chatSelection ? (
+      {showChatPicker ? (
         <main className="flex-1 overflow-y-auto px-4 py-8">
           <section className="max-w-2xl mx-auto">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Choose a chat</h2>
             <p className="text-sm text-gray-500 mb-5">Select one conversation from this export.</p>
-            <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200 max-h-[60vh] overflow-y-auto">
+            <select
+              value={selectedChatIndex ?? ''}
+              onChange={event => setSelectedChatIndex(event.target.value === '' ? null : Number(event.target.value))}
+              className="w-full max-w-xl bg-white border border-gray-300 rounded-md px-3 py-2.5 text-gray-900"
+            >
+              <option value="" disabled>Select a conversation</option>
               {chatSelection.chats.map((chat, index) => (
-                <label key={`${chat.id ?? index}-${index}`} className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="checkbox"
-                    checked={selectedChatIndex === index}
-                    onChange={event => setSelectedChatIndex(event.target.checked ? index : null)}
-                    className="h-4 w-4 accent-blue-600"
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium text-gray-900">{chat.name || `Chat ${index + 1}`}</span>
-                    <span className="block text-sm text-gray-500">{chat.messages?.length || 0} messages</span>
-                  </span>
-                </label>
+                <option key={`${chat.id ?? index}-${index}`} value={index}>
+                  {chat.name || `Chat ${index + 1}`} ({chat.messages?.length || 0} messages)
+                </option>
               ))}
-            </div>
+            </select>
             <button
               type="button"
               onClick={handleOpenSelectedChat}
