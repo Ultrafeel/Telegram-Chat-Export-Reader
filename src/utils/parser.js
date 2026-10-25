@@ -23,10 +23,12 @@ const renderJsonText = value => {
   }).join('');
 };
 
-export const parseJsonExport = async (data, files) => {
+export const parseJsonExport = async (data, files, chatIndex = 0) => {
+  const chat = data.chats.list[chatIndex];
   const basePath = files.find(file => file.webkitRelativePath)?.webkitRelativePath?.split('/')[0] || '';
   const resolvePath = path => path ? findFileInFolder(files, basePath ? `${basePath}/${path}` : path) : null;
-  const messages = await Promise.all((data.messages || []).map(async (source, index) => {
+  const messages = await Promise.all((chat.messages || [])
+  .map(async (source, index) => {
     const text = Array.isArray(source.text)
       ? source.text.map(part => typeof part === 'string' ? part : part?.text || '').join('')
       : String(source.text || '');
@@ -85,7 +87,7 @@ export const parseJsonExport = async (data, files) => {
   }));
   const byId = new Map(messages.map(message => [message.id.replace('message', ''), message]));
   return {
-    title: data.name || 'Chat',
+    title: chat.name || data.name || 'Chat',
     messages: messages.map(message => message.replyTo && !message.replyTo.isAnotherChat && byId.has(String(message.replyTo.messageId))
       ? { ...message, replyTo: { ...message.replyTo, quotedMessage: byId.get(String(message.replyTo.messageId)) } }
       : message)

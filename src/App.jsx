@@ -8,6 +8,8 @@ import { parseMessage, parseJsonExport } from './utils/parser';
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [chatTitle, setChatTitle] = useState('');
+  const [chatSelection, setChatSelection] = useState(null);
+  const [selectedChatIndex, setSelectedChatIndex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [darkMode, setDarkMode] = useState(() => {
@@ -30,6 +32,8 @@ const App = () => {
     setLoading(true);
     setProgress(0);
     setMessages([]);
+    setChatSelection(null);
+    setSelectedChatIndex(null);
     
     const firstPath = files[0].webkitRelativePath;
     const basePath = firstPath.split('/')[0];
@@ -49,9 +53,17 @@ const App = () => {
     if (jsonFile) {
       try {
         const data = JSON.parse(await jsonFile.text());
-        const parsed = await parseJsonExport(data, files);
-        setChatTitle(parsed.title);
-        setMessages(parsed.messages);
+        const chats = data.chats?.list;
+        if (!Array.isArray(chats) || chats.length === 0) {
+          throw new Error('The JSON export does not contain any chats.');
+        }
+        if (chats.length === 1) {
+          const parsed = await parseJsonExport(data, files, 0);
+          setChatTitle(parsed.title);
+          setMessages(parsed.messages);
+        } else {
+          setChatSelection({ data, files, chats });
+        }
       } catch (error) {
         console.error('Failed to parse Telegram JSON export:', error);
         alert('Could not read this JSON export. Make sure it is a Telegram chat export.');
@@ -111,6 +123,22 @@ const App = () => {
     setProgress(0);
   };
 
+  const handleOpenSelectedChat = async () => {
+    if (!chatSelection || selectedChatIndex === null) return;
+    setLoading(true);
+    try {
+      const parsed = await parseJsonExport(chatSelection.data, chatSelection.files, selectedChatIndex);
+      setChatTitle(parsed.title);
+      setMessages(parsed.messages);
+      setChatSelection(null);
+    } catch (error) {
+      console.error('Failed to parse Telegram JSON export:', error);
+      alert('Could not read this chat from the Telegram JSON export.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col app-shell">
       <ChatHeader 
@@ -120,7 +148,38 @@ const App = () => {
         onLoadClick={() => fileInputRef.current?.click()} 
       />
 
-      {messages.length === 0 ? (
+      {chatSelection ? (
+        <main className="flex-1 overflow-y-auto px-4 py-8">
+          <section className="max-w-2xl mx-auto">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Choose a chat</h2>
+            <p className="text-sm text-gray-500 mb-5">Select one conversation from this export.</p>
+            <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200 max-h-[60vh] overflow-y-auto">
+              {chatSelection.chats.map((chat, index) => (
+                <label key={`${chat.id ?? index}-${index}`} className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="checkbox"
+                    checked={selectedChatIndex === index}
+                    onChange={event => setSelectedChatIndex(event.target.checked ? index : null)}
+                    className="h-4 w-4 accent-blue-600"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium text-gray-900">{chat.name || `Chat ${index + 1}`}</span>
+                    <span className="block text-sm text-gray-500">{chat.messages?.length || 0} messages</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleOpenSelectedChat}
+              disabled={selectedChatIndex === null || loading}
+              className="mt-5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-md font-medium transition"
+            >
+              {loading ? 'Loading chat...' : 'Open chat'}
+            </button>
+          </section>
+        </main>
+      ) : messages.length === 0 ? (
         <div className="flex-1 overflow-y-auto">
           <EmptyState 
             loading={loading}
