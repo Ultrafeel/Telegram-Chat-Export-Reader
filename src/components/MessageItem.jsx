@@ -35,7 +35,11 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
     'bg-pink-100 text-pink-700',
   ];
 
-  const colorIndex = (message.initials?.charCodeAt(0) || 0) % colors.length;
+  const avatarName = message.forwardedFrom || message.from || '';
+  const avatarInitials = message.forwardedFrom
+    ? avatarName.split(/\s+/).map(word => word[0] || '').slice(0, 2).join('').toUpperCase()
+    : message.initials;
+  const colorIndex = (avatarInitials?.charCodeAt(0) || 0) % colors.length;
   const bgColor = colors[colorIndex];
 
   // Filter out invalid media items
@@ -51,7 +55,7 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
         <div
           className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs ${bgColor}`}
         >
-          {message.initials || '?'}
+          {avatarInitials || '?'}
         </div>
       )}
 
