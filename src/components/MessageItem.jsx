@@ -1,7 +1,68 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { Forward } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Code, Forward, X } from 'lucide-react';
 import MediaItem from './MediaItem';
 import FormattedText from './FormattedText';
+
+const MessageSourceButton = ({ sourceJson }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!sourceJson) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        title="View message JSON"
+        aria-label="View message JSON"
+        className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+      >
+        <Code size={15} aria-hidden="true" />
+      </button>
+      {isOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) setIsOpen(false);
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="message-source-title"
+            className="w-full max-w-3xl overflow-hidden rounded-md bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
+          >
+            <header className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+              <h2 id="message-source-title" className="text-sm font-semibold">Message JSON source</h2>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close JSON source"
+                className="inline-flex h-8 w-8 items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </header>
+            <pre className="max-h-[75vh] overflow-auto p-4 text-xs leading-relaxed">
+              <code>{JSON.stringify(sourceJson, null, 2)}</code>
+            </pre>
+          </section>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
 
 const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia }) => {
   const itemRef = useRef(null);
@@ -20,8 +81,11 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
         ref={itemRef}
         className="my-6 text-center"
       >
-        <div className="inline-block bg-gray-100 text-gray-600 text-xs px-3 py-1.5 rounded-full">
-          {message.text}
+        <div className="inline-flex items-center gap-2">
+          <div className="inline-block bg-gray-100 text-gray-600 text-xs px-3 py-1.5 rounded-full">
+            {message.text}
+          </div>
+          <MessageSourceButton sourceJson={message.sourceJson} />
         </div>
       </div>
     );
@@ -68,9 +132,12 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
       {/* Message content */}
       <div className="flex-1 max-w-2xl">
         {!isJoinedMessage && (
-          <div className="flex items-baseline gap-2 px-3 pt-1">
-            <span className="font-semibold text-sm text-gray-900">{message.from}</span>
-            <span className="text-xs text-gray-500">{message.time}</span>
+          <div className="flex items-baseline justify-between gap-2 px-3 pt-1">
+            <div className="flex items-baseline gap-2">
+              <span className="font-semibold text-sm text-gray-900">{message.from}</span>
+              <span className="text-xs text-gray-500">{message.time}</span>
+            </div>
+            <MessageSourceButton sourceJson={message.sourceJson} />
           </div>
         )}
 
@@ -80,8 +147,11 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
           </div>
         )}
 
-        {isJoinedMessage && message.time && (
-          <div className="text-xs text-gray-500 mb-1 px-3">{message.time}</div>
+        {isJoinedMessage && (message.time || message.sourceJson) && (
+          <div className="flex items-center justify-between mb-1 px-3">
+            <span className="text-xs text-gray-500">{message.time}</span>
+            <MessageSourceButton sourceJson={message.sourceJson} />
+          </div>
         )}
 
         {/* Reply/Quote section */}

@@ -36,7 +36,7 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
     const time = source.date ? new Date(source.date).toLocaleString() : '';
     if (source.type === 'service') {
       const actionText = source.action ? source.action.replace(/_/g, ' ') : '';
-      return { id: `message${source.id ?? index}`, type: 'service', text: [sender, actionText].filter(Boolean).join(' ') || text };
+      return { id: `message${source.id ?? index}`, type: 'service', text: [sender, actionText].filter(Boolean).join(' ') || text, sourceJson: source };
     }
 
     const media = [];
@@ -82,7 +82,7 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
       id: `message${source.id ?? index}`, type: 'message', from: sender, time,
       text, formattedHTML: renderJsonText(source.text), replyTo, media,
       initials: sender.split(/\s+/).map(word => word[0] || '').slice(0, 2).join('').toUpperCase(), userpicClass: 'userpic1',
-      forwardedFrom: source.forwarded_from || ''
+      forwardedFrom: source.forwarded_from || '', sourceJson: source
     };
   }));
   const byId = new Map(messages.map(message => [message.id.replace('message', ''), message]));
