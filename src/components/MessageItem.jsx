@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import { Forward } from 'lucide-react';
 import MediaItem from './MediaItem';
 import FormattedText from './FormattedText';
 
@@ -53,9 +54,14 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
       {/* Avatar - only show if not a joined message */}
       {!isJoinedMessage && (
         <div
-          className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs ${bgColor}`}
+          className={`relative w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs ${bgColor}`}
         >
           {avatarInitials || '?'}
+          {message.forwardedFrom && (
+            <span title="Forwarded message" className="absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-gray-600 shadow-sm">
+              <Forward size={10} aria-hidden="true" />
+            </span>
+          )}
         </div>
       )}
 
