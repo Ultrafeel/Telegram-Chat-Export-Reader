@@ -109,6 +109,12 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
 
   // Filter out invalid media items
   const validMedia = (message.media || []).filter(item => item && typeof item === 'object' && item.type);
+  const photoMedia = validMedia
+    .map((item, mediaIndex) => ({ item, mediaIndex }))
+    . filter(({ item }) => item.type === 'photo');
+  const otherMedia = validMedia
+    .map((item, mediaIndex) => ({ item, mediaIndex }))
+    .filter(({ item }) => item.type !== 'photo');
 
   // Check if this is a "joined" message (no user info)
   const isJoinedMessage = !message.from || !message.initials;
@@ -151,6 +157,24 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
           <div className="flex items-center justify-between mb-1 px-3">
             <span className="text-xs text-gray-500">{message.time}</span>
             <MessageSourceButton sourceJson={message.sourceJson} />
+          </div>
+        )}
+
+        {photoMedia.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2 px-3">
+            {photoMedia.map(({ item, mediaIndex }) => (
+              <MediaItem
+                key={`${message.id}-${mediaIndex}`}
+                item={item}
+                mediaIndex={mediaIndex}
+                totalMedia={validMedia.length}
+                allMedia={validMedia}
+                onMediaOpen={(localIndex) => {
+                  setCurrentMediaIndex(localIndex);
+                  if (onOpenGlobalMedia) onOpenGlobalMedia(localIndex);
+                }}
+              />
+            ))}
           </div>
         )}
 
@@ -208,13 +232,13 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
         ) : null}
 
         {/* Media content */}
-        {validMedia.length > 0 && (
+        {otherMedia.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2 px-3">
-            {validMedia.map((item, idx) => (
+            {otherMedia.map(({ item, mediaIndex }) => (
               <MediaItem 
-                key={`${message.id}-${idx}`} 
+                key={`${message.id}-${mediaIndex}`} 
                 item={item}
-                mediaIndex={idx}
+                mediaIndex={mediaIndex}
                 totalMedia={validMedia.length}
                 allMedia={validMedia}
                 onMediaOpen={(localIndex) => {

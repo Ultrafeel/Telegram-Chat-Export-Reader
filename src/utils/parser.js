@@ -68,7 +68,8 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
         case 'video_file': media.push({ type: 'video', url, thumb, duration }); break;
         case 'voice_message': media.push({ type: 'voice', url, duration }); break;
         default:
-          if (source.photo) media.push({ type: 'photo', url, thumb: thumb || url });
+          if (source.photo) 
+            media.push({ type: 'photo', url, thumb: thumb || url });
           else if (source.file) media.push({ type: 'file', url, title: source.file_name || source.file.split('/').pop(), size: source.file_size ? `${Math.round(source.file_size / 1024)} KB` : '' });
       }
     }
