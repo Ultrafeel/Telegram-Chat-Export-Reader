@@ -64,6 +64,12 @@ const MessageItem = memo(({ message, index, onHeightChange, onOpenGlobalMedia })
           </div>
         )}
 
+        {message.forwardedFrom && (
+          <div className="px-3 mt-1 text-xs text-gray-500">
+            Forwarded from <span className="font-medium text-gray-700">{message.forwardedFrom}</span>
+          </div>
+        )}
+
         {isJoinedMessage && message.time && (
           <div className="text-xs text-gray-500 mb-1 px-3">{message.time}</div>
         )}
