@@ -41,6 +41,10 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
 
     const media = [];
     const mainFile = source.file || source.photo;
+    // that text can be produced by exporter.
+    const notIncludedText = '(File not included. Change data exporting settings to download.)';
+    const hasNotIncludedMedia = [mainFile, source.thumbnail]
+      .some(path => typeof path === 'string' && path.includes(notIncludedText));
     const thumb = await resolvePath(source.thumbnail);
     const url = await resolvePath(mainFile);
     const duration = source.duration_seconds ? `${source.duration_seconds}s` : '';
@@ -52,7 +56,11 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
       const contact = source.contact_information;
       media.push({ type: 'contact', name: [contact.first_name, contact.last_name].filter(Boolean).join(' '), phone: contact.phone_number || '' });
     }
-    if (url) {
+    if (hasNotIncludedMedia) {
+      media.push({ type: 'unavailable', label: notIncludedText });
+    } else if (!url && (mainFile || source.thumbnail)) {
+      media.push({ type: 'unavailable', noFile: true });
+    } else if (url) {
       switch (source.media_type) {
         case 'sticker':
           if (source.mime_type === 'application/x-tgsticker') {

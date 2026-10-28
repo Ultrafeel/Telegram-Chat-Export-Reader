@@ -45,6 +45,19 @@ const MediaItem = memo(({ item, mediaIndex = 0, totalMedia = 1, allMedia = [], o
 
   const currentMedia = allMedia[currentIndex] || item;
 
+  if (item.type === 'unavailable') {
+    return (
+      <div
+        role="img"
+        aria-label={item.noFile ? 'Media unavailable: no file' : 'Media not included in export'}
+        className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+      >
+        <span title={item.label || (item.noFile ? '(no file)' : 'Media unavailable')} aria-hidden="true">🚫</span>
+        {item.noFile && <span>(no file)</span>}
+      </div>
+    );
+  }
+
   if (item.type === 'photo') {
     return (
       <>
