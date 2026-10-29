@@ -23,6 +23,8 @@ const renderJsonText = value => {
   }).join('');
 };
 
+export const getChatTitle = chat => chat?.name || [chat?.type, chat?.id != null ? `id=${chat.id}` : ''].filter(Boolean).join(' ');
+
 export const parseJsonExport = async (data, files, chatIndex = 0) => {
   const chat = data.chats.list[chatIndex];
   const chatSourceJsonCopy = { ...chat };
@@ -97,9 +99,8 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
     };
   }));
   const byId = new Map(messages.map(message => [message.id.replace('message', ''), message]));
-  const generatedTitle = [chat.type, chat.id != null ? `id=${chat.id}` : ''].filter(Boolean).join(' ');
   return {
-    title: chat.name || generatedTitle || data.name || 'Chat',
+    title: getChatTitle(chat) || data.name || 'Chat',
     sourceJson: chatSourceJsonCopy,
     messages: messages.map(message => message.replyTo && !message.replyTo.isAnotherChat && byId.has(String(message.replyTo.messageId))
       ? { ...message, replyTo: { ...message.replyTo, quotedMessage: byId.get(String(message.replyTo.messageId)) } }

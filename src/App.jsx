@@ -3,7 +3,7 @@ import ChatHeader from './components/ChatHeader';
 import MessageList from './components/MessageList';
 import EmptyState from './components/EmptyState';
 import { parseHTML } from './utils/fileHandler';
-import { parseMessage, parseJsonExport } from './utils/parser';
+import { parseMessage, parseJsonExport, getChatTitle } from './utils/parser';
 import { downloadStaticHtml } from './utils/exportHtml';
 
 const App = () => {
@@ -27,6 +27,10 @@ const App = () => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
+
+  useEffect(() => {
+    if (chatTitle) document.title = chatTitle;
+  }, [chatTitle]);
 
   const handleFolderSelect = async (e) => {
     const files = Array.from(e.target.files);
@@ -176,7 +180,7 @@ const App = () => {
               <option value="" disabled>Select a conversation</option>
               {chatSelection.chats.map((chat, index) => (
                 <option key={`${chat.id ?? index}-${index}`} value={index}>
-                  {chat.name || `Chat ${index + 1}`} ({chat.messages?.length || 0} messages)
+                  {getChatTitle(chat) || `Chat ${index + 1}`} ({chat.messages?.length || 0} messages)
                 </option>
               ))}
             </select>

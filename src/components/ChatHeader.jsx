@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Upload, Moon, Sun, Download, Code, X } from 'lucide-react';
+import { getChatTitle } from '../utils/parser';
 
 const ChatHeader = ({ onExportHtml, chatSourceJson, chatTitle, chats, selectedChatIndex, onSelectChat, isLoading, isDarkMode, onToggleDarkMode, onLoadClick }) => {
   const [isChatJsonOpen, setIsChatJsonOpen] = useState(false);
@@ -32,7 +33,7 @@ const ChatHeader = ({ onExportHtml, chatSourceJson, chatTitle, chats, selectedCh
               >
                 {chats.map((chat, index) => (
                   <option key={`${chat.id ?? index}-${index}`} value={index}>
-                    {chat.name || `Chat ${index + 1}`}
+                    {getChatTitle(chat) || `Chat ${index + 1}`}
                   </option>
                 ))}
               </select>
