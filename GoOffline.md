@@ -1,23 +1,26 @@
-You can temporarily make a browser **offline** either for one tab or for the whole browser.
+# Как открыть Telegram-экспорт офлайн
 
-## 1. Chrome / Edge: take one tab offline
+Приложение обрабатывает экспорт прямо в браузере: файлы чата не отправляются на сервер. Чтобы открыть экспорт без подключения к интернету, сначала загрузите приложение, затем отключите сеть для его вкладки и выберите папку экспорта.
 
-Useful for testing how a web app behaves without a connection:
+## Chrome или Edge
 
-1. Open the tab you want to disconnect.
-2. Open Developer Tools with `F12` or `Ctrl+Shift+I` (`Cmd+Option+I` on macOS).
-3. Select the Network panel.
-4. In the network-throttling dropdown—usually showing “No throttling”—select Offline.
-5. Keep Developer Tools open while testing. To reconnect, select No throttling again.
+1. Откройте приложение и дождитесь, пока оно полностью загрузится.
+2. Откройте инструменты разработчика клавишей `F12` или `Ctrl+Shift+I`.
+3. Перейдите на вкладку **Network** и в списке ограничения сети, где обычно указано **No throttling**, выберите **Offline**. Оставьте инструменты разработчика открытыми.
+4. В приложении нажмите кнопку загрузки экспорта и выберите папку Telegram-экспорта. Браузер попросит подтвердить выбор папки.
+5. Дождитесь окончания обработки. Для подключения выберите **No throttling**.
 
-This simulates an offline connection for the inspected tab, rather than disconnecting your entire computer. [stackoverflow](https://stackoverflow.com/questions/16091243/does-chrome-have-a-work-offline-option)
+Режим **Offline** в DevTools действует только на проверяемую вкладку. Не обновляйте ее после отключения сети: приложение уже загружено и продолжит работать, но браузер может не суметь загрузить страницу заново.
 
-## 2. Firefox: switch the browser to offline mode
+## Какая папка нужна
 
-In the menu bar, choose File → Work Offline. On Windows/Linux, press `Alt` if the menu bar is hidden. Select the same option again to reconnect. Firefox may still display previously cached pages while offline. [howtogeek](https://www.howtogeek.com/263854/how-to-enable-offline-browsing-in-firefox/)
+Выберите папку, в которой лежит один из файлов экспорта:
 
-## 3. Chrome / Edge: use a toolbar toggle
+- `result.json` для экспорта в формате JSON;
+- `messages.html` или `messages1.html` для экспорта в формате HTML.
 
-An extension such as Work Offline provides a button to toggle offline mode. Its listing describes both all-tabs and individual-tab modes. This is convenient for repeated use, but requires installing a third-party extension. [chromewebstore.google](https://chromewebstore.google.com/detail/work-offline/gcjdagaoojgeilcobhibkgbodajcojda?hl=en)
+Не перемещайте медиафайлы из экспорта: фотографии, видео и другие вложения должны оставаться в исходной структуре папок. Если в папке есть и JSON, и HTML, приложение загрузит JSON.
 
-For a quick web-development test, the Network → Offline setting is the simplest starting point. [stackoverflow](https://stackoverflow.com/questions/16091243/does-chrome-have-a-work-offline-option)
+## Важно
+
+Этот способ подходит, если страница приложения уже открыта и загружена в браузере. Если вы закрыли вкладку или обновили страницу без подключения к сети, сначала восстановите подключение и откройте приложение снова. Сам Telegram-экспорт при этом можно выбрать и обработать офлайн.
