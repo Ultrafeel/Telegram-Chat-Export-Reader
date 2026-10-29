@@ -1,3 +1,30 @@
+# Open a Telegram Export Offline
+
+The app processes your export locally in the browser; chat files are not uploaded to a server. To use it without an internet connection, load the app first, take its tab offline, then choose your export folder.
+
+## Chrome, Edge, or Firefox
+
+1. Open the app and wait for it to finish loading.
+2. Open Developer Tools with `F12` or `Ctrl+Shift+I`.
+3. Open the **Network** panel and select **Offline** from the network throttling menu. If the menu shows **No throttling**, open it and choose **Offline**. Keep Developer Tools open.
+4. In the app, click the button to load an export and select your Telegram export folder. Confirm the folder selection if the browser asks.
+5. Wait for the export to finish processing. To reconnect, select **No throttling**.
+
+The **Offline** setting in Developer Tools applies only to the inspected tab. Do not refresh the page after going offline: the app is already loaded and can continue running, but the browser may not be able to reload it.
+
+## Choose the right folder
+
+Select the folder containing one of these export files:
+
+- `result.json` for a JSON export;
+- `messages.html` or `messages1.html` for an HTML export.
+
+Keep the media files in the original export folder structure so photos, videos, and other attachments can be found. If the folder contains both JSON and HTML, the app loads the JSON export.
+
+## Important
+
+This works as long as the app page is already open and loaded. If you close the tab or refresh while offline, reconnect and open the app again. You can still select and process the Telegram export while offline.
+
 # Как открыть Telegram-экспорт офлайн
 
 Приложение обрабатывает экспорт прямо в браузере: файлы чата не отправляются на сервер. Чтобы открыть экспорт без подключения к интернету, сначала загрузите приложение, затем отключите сеть для его вкладки и выберите папку экспорта.
