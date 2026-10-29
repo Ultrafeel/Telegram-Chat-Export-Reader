@@ -1,7 +1,7 @@
 import React from 'react';
-import { Upload, Moon, Sun } from 'lucide-react';
+import { Upload, Moon, Sun, Download } from 'lucide-react';
 
-const ChatHeader = ({ chatTitle, chats, selectedChatIndex, onSelectChat, isLoading, isDarkMode, onToggleDarkMode, onLoadClick }) => {
+const ChatHeader = ({ onExportHtml, chatTitle, chats, selectedChatIndex, onSelectChat, isLoading, isDarkMode, onToggleDarkMode, onLoadClick }) => {
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -31,6 +31,19 @@ const ChatHeader = ({ chatTitle, chats, selectedChatIndex, onSelectChat, isLoadi
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {onExportHtml && (
+            <button
+              onClick={onExportHtml}
+              title="Media is referenced by relative path. Save the HTML into the export folder (next to result.json) so pictures and files load."
+              className="bg-slate-100 hover:bg-slate-200 text-slate-900 px-3 py-2 rounded-full font-medium transition flex items-center gap-2 text-sm"
+            >
+              <Download className="w-4 h-4" />
+              <span className="flex flex-col items-start leading-tight">
+                Save HTML
+                <span className="text-[10px] font-normal text-slate-500">place in export folder</span>
+              </span>
+            </button>
+          )}
           <button
             onClick={onToggleDarkMode}
             className="bg-slate-100 hover:bg-slate-200 text-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-100 px-3 py-2 rounded-full font-medium transition flex items-center gap-2 text-sm"

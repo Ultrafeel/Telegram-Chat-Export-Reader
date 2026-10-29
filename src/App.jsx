@@ -4,6 +4,7 @@ import MessageList from './components/MessageList';
 import EmptyState from './components/EmptyState';
 import { parseHTML } from './utils/fileHandler';
 import { parseMessage, parseJsonExport } from './utils/parser';
+import { downloadStaticHtml } from './utils/exportHtml';
 
 const App = () => {
   const [messages, setMessages] = useState([]);
@@ -146,6 +147,7 @@ const App = () => {
   return (
     <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col app-shell">
       <ChatHeader 
+        onExportHtml={!showChatPicker && messages.some(m => m.sourceJson) ? () => downloadStaticHtml(chatTitle, messages) : null}
         chatTitle={chatTitle} 
         chats={chatSelection?.chats}
         selectedChatIndex={selectedChatIndex}
