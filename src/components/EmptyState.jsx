@@ -104,7 +104,7 @@ const EmptyState = ({ onLoadClick, loading, progress }) => {
               <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
               <span>
                 <span className="block font-medium text-green-900">100% Private &amp; Local</span>
-                <span className="mt-1 block text-sm text-green-700">All processing happens in your browser. Your data is never uploaded or stored anywhere. If you want to verify this, you can switch the tab to Offline in Developer Tools, but it is not necessary. See the guide below.</span>
+                <span className="mt-1 block text-sm text-green-700">All processing happens in your browser. Your data is never uploaded or stored anywhere. Offline mode is optional and only needed to test offline behavior. Click this section to view the offline guide.</span>
               </span>
             </span>
           </summary>
