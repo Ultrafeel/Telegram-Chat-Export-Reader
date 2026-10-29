@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ChatHeader from './components/ChatHeader';
 import MessageList from './components/MessageList';
 import EmptyState from './components/EmptyState';
@@ -6,7 +6,15 @@ import { parseHTML } from './utils/fileHandler';
 import { parseMessage, parseJsonExport, getChatTitle } from './utils/parser';
 import { downloadStaticHtml } from './utils/exportHtml';
 
+const flattenText = text => Array.isArray(text)
+  ? text.map(part => typeof part === 'string' ? part : part?.text || '').join('')
+  : String(text || '');
+
+const MAX_GLOBAL_RESULTS = 200;
+
 const App = () => {
+  const [query, setQuery] = useState('');
+  const [globalQuery, setGlobalQuery] = useState('');
   const [messages, setMessages] = useState([]);
   const [chatTitle, setChatTitle] = useState('');
   const [chatSourceJson, setChatSourceJson] = useState(null);
@@ -38,6 +46,8 @@ const App = () => {
 
     setLoading(true);
     setProgress(0);
+    setQuery('');
+    setGlobalQuery('');
     setMessages([]);
     setChatSourceJson(null);
     setChatSelection(null);
@@ -134,8 +144,31 @@ const App = () => {
     setProgress(0);
   };
 
-  const handleOpenSelectedChat = async (chatIndex = selectedChatIndex) => {
+  const globalResults = useMemo(() => {
+    const needle = globalQuery.trim().toLowerCase();
+    if (!needle || !chatSelection) return [];
+    const results = [];
+    for (let chatIndex = 0; chatIndex < chatSelection.chats.length; chatIndex++) {
+      const chat = chatSelection.chats[chatIndex];
+      for (const msg of chat.messages || []) {
+        const text = flattenText(msg.text);
+        if (!text.toLowerCase().includes(needle)) continue;
+        results.push({ chatIndex, chatTitle: getChatTitle(chat) || `Chat ${chatIndex + 1}`, from: msg.from || msg.actor || '', date: msg.date || '', text, key: `${chatIndex}-${msg.id}` });
+        if (results.length >= MAX_GLOBAL_RESULTS) return results;
+      }
+    }
+    return results;
+  }, [globalQuery, chatSelection]);
+
+  const visibleMessages = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return messages;
+    return messages.filter(m => `${m.text || ''} ${m.from || ''}`.toLowerCase().includes(needle));
+  }, [messages, query]);
+
+  const handleOpenSelectedChat = async (chatIndex = selectedChatIndex, nextQuery = '') => {
     if (!chatSelection || chatIndex === null) return;
+    setQuery(nextQuery);
     setSelectedChatIndex(chatIndex);
     setLoading(true);
     try {
@@ -192,6 +225,37 @@ const App = () => {
             >
               {loading ? 'Loading chat...' : 'Open chat'}
             </button>
+
+            <h2 className="text-xl font-semibold text-gray-900 mt-10 mb-2">Search all chats</h2>
+            <input
+              type="search"
+              value={globalQuery}
+              onChange={event => setGlobalQuery(event.target.value)}
+              placeholder="Search messages in every chat..."
+              className="w-full max-w-xl bg-white border border-gray-300 rounded-md px-3 py-2.5 text-gray-900"
+            />
+            {globalQuery.trim() && (
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-2">
+                  {globalResults.length >= MAX_GLOBAL_RESULTS ? `First ${MAX_GLOBAL_RESULTS} matches` : `${globalResults.length} matches`}
+                </p>
+                <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md bg-white">
+                  {globalResults.map(result => (
+                    <li key={result.key}>
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => handleOpenSelectedChat(result.chatIndex, globalQuery.trim())}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        <div className="text-xs text-gray-500">{result.chatTitle}{result.from ? ` · ${result.from}` : ''}{result.date ? ` · ${new Date(result.date).toLocaleString()}` : ''}</div>
+                        <div className="text-sm text-gray-900 line-clamp-2 break-words">{result.text}</div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
         </main>
       ) : messages.length === 0 ? (
@@ -203,7 +267,30 @@ const App = () => {
           />
         </div>
       ) : (
-        <MessageList messages={messages} />
+        <>
+          <div className="bg-white border-b border-gray-200 px-4 py-2">
+            <div className="max-w-5xl mx-auto flex items-center gap-3">
+              <input
+                type="search"
+                value={query}
+                onChange={event => setQuery(event.target.value)}
+                placeholder="Search in this chat..."
+                className="flex-1 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-900"
+              />
+              {query.trim() && <span className="text-xs text-gray-500">{visibleMessages.length} found</span>}
+              {chatSelection && (
+                <button
+                  type="button"
+                  onClick={() => setShowChatPicker(true)}
+                  className="text-sm text-blue-600 hover:underline whitespace-nowrap"
+                >
+                  Search all chats
+                </button>
+              )}
+            </div>
+          </div>
+          <MessageList key={query.trim().toLowerCase()} messages={visibleMessages} />
+        </>
       )}
 
       <input
