@@ -1,6 +1,6 @@
 # Telegram Chat Viewer
 
-A lightweight React app to view Telegram HTML and JSON exports locally, with rich formatting, media browsing, and a Telegram-like UI.
+A lightweight React app to view Telegram HTML and JSON exports locally, with rich formatting, media browsing, search and a Telegram-like UI.
 
 > **Note:** This viewer runs entirely in your browser. No data is uploaded or sent anywhere.
 
@@ -13,6 +13,7 @@ A lightweight React app to view Telegram HTML and JSON exports locally, with ric
 - **Global Media Viewer** — Fullscreen media browser with keyboard navigation and counter (X / Y)
 - **Inline Playback** — Round-video playback and Telegram-style audio waveform for voice messages
 - **Quote Preview** — Shows the actual quoted message content when available
+- **Search** — Filter the open chat by message text or sender, or search across all chats of a multi-chat JSON export (results are paged, 200 at a time)
 
 ![Media Viewer](./screenshots/mediaview.png)
 *Navigate through photos and videos with keyboard shortcuts*
@@ -46,6 +47,8 @@ Open the local server URL printed by Vite (usually `http://localhost:3000`) in y
 6. **Browse your messages** with full formatting and media support.
 7. **Click media thumbnails** to open the global viewer and navigate with the left/right arrow keys or on-screen controls.
 8. **Play voice messages** inline with the Telegram-style waveform UI.
+9. **Search in a chat** with the "Search in this chat" field above the messages; it filters by message text and sender.
+10. **Search all chats** (multi-chat JSON exports) from the chat selection screen, or via the "Search all chats" link above an open chat. Click a result to open that chat with the query applied; use "Show more" to load further results.
 
 ## Developer Notes
 
@@ -55,7 +58,9 @@ Open the local server URL printed by Vite (usually `http://localhost:3000`) in y
 
 ## TODO
 
-- [ ] Search through chat history by message content, sender, or date
+- [x] ~~Search through chat history by message content or sender~~
+- [ ] Search by date
+- [ ] Jump to the exact message from a global search result
 - [ ] Enhanced filtering options
 - [x] ~~Dark/light theme toggle~~
 
