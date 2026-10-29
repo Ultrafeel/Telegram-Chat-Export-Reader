@@ -10,11 +10,12 @@ const flattenText = text => Array.isArray(text)
   ? text.map(part => typeof part === 'string' ? part : part?.text || '').join('')
   : String(text || '');
 
-const MAX_GLOBAL_RESULTS = 200;
+const GLOBAL_PAGE_SIZE = 200;
 
 const App = () => {
   const [query, setQuery] = useState('');
   const [globalQuery, setGlobalQuery] = useState('');
+  const [globalLimit, setGlobalLimit] = useState(GLOBAL_PAGE_SIZE);
   const [messages, setMessages] = useState([]);
   const [chatTitle, setChatTitle] = useState('');
   const [chatSourceJson, setChatSourceJson] = useState(null);
@@ -154,7 +155,6 @@ const App = () => {
         const text = flattenText(msg.text);
         if (!text.toLowerCase().includes(needle)) continue;
         results.push({ chatIndex, chatTitle: getChatTitle(chat) || `Chat ${chatIndex + 1}`, from: msg.from || msg.actor || '', date: msg.date || '', text, key: `${chatIndex}-${msg.id}` });
-        if (results.length >= MAX_GLOBAL_RESULTS) return results;
       }
     }
     return results;
@@ -230,17 +230,17 @@ const App = () => {
             <input
               type="search"
               value={globalQuery}
-              onChange={event => setGlobalQuery(event.target.value)}
+              onChange={event => { setGlobalQuery(event.target.value); setGlobalLimit(GLOBAL_PAGE_SIZE); }}
               placeholder="Search messages in every chat..."
               className="w-full max-w-xl bg-white border border-gray-300 rounded-md px-3 py-2.5 text-gray-900"
             />
             {globalQuery.trim() && (
               <div className="mt-4">
                 <p className="text-sm text-gray-500 mb-2">
-                  {globalResults.length >= MAX_GLOBAL_RESULTS ? `First ${MAX_GLOBAL_RESULTS} matches` : `${globalResults.length} matches`}
+                  {globalResults.length} matches
                 </p>
                 <ul className="divide-y divide-gray-200 border border-gray-200 rounded-md bg-white">
-                  {globalResults.map(result => (
+                  {globalResults.slice(0, globalLimit).map(result => (
                     <li key={result.key}>
                       <button
                         type="button"
@@ -254,6 +254,15 @@ const App = () => {
                     </li>
                   ))}
                 </ul>
+                {globalResults.length > globalLimit && (
+                  <button
+                    type="button"
+                    onClick={() => setGlobalLimit(limit => limit + GLOBAL_PAGE_SIZE)}
+                    className="mt-3 text-sm text-blue-600 hover:underline"
+                  >
+                    Show more ({globalResults.length - globalLimit} left)
+                  </button>
+                )}
               </div>
             )}
           </section>
