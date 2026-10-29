@@ -1,6 +1,6 @@
-# Open a Telegram Export Offline
+# Use This Reader Offline
 
-The app processes your export locally in the browser; chat files are not uploaded to a server. To use it without an internet connection, load the app first, take its tab offline, then choose your export folder.
+This guide explains how to use the Reader without an internet connection. The app processes your Telegram export locally in the browser; the export itself stays on your device and is not uploaded to a server. Load the Reader first, take its tab offline, then choose your export folder.
 
 ## Chrome, Edge, or Firefox
 
@@ -29,9 +29,9 @@ This works as long as the app page is already open and loaded. If you close the 
 
 In the menu bar, choose File → Work Offline. On Windows/Linux, press `Alt` if the menu bar is hidden. Select the same option again to reconnect. Firefox may still display previously cached pages while offline. [howtogeek](https://www.howtogeek.com/263854/how-to-enable-offline-browsing-in-firefox/)
 
-# Как открыть Telegram-экспорт офлайн
+# Как пользоваться приложением офлайн
 
-Приложение обрабатывает экспорт прямо в браузере: файлы чата не отправляются на сервер. Чтобы открыть экспорт без подключения к интернету, сначала загрузите приложение, затем отключите сеть для его вкладки и выберите папку экспорта.
+Эта инструкция объясняет, как пользоваться Reader без подключения к интернету. Приложение обрабатывает Telegram-экспорт прямо в браузере: файлы чата остаются на вашем устройстве и не отправляются на сервер. Сначала загрузите Reader, затем отключите сеть для его вкладки и выберите папку экспорта.
 
 ## Chrome, Edge или Firefox
 

@@ -98,7 +98,7 @@ const EmptyState = ({ onLoadClick, loading, progress }) => {
       </button>
 
       <details className="mt-8 mx-auto max-w-3xl rounded-lg border border-gray-200 bg-white p-4 text-left">
-        <summary className="cursor-pointer font-medium text-gray-900">Как открыть экспорт офлайн</summary>
+        <summary className="cursor-pointer font-medium text-gray-900">Use this reader offline</summary>
         <div className="mt-4 space-y-3 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
           {renderGuide(offlineGuide)}
         </div>
