@@ -1,6 +1,6 @@
 import React from 'react';
 import { Send, FolderOpen, Shield } from 'lucide-react';
-import offlineGuide from '../../GoOffline.md?raw';
+import offlineGuide from '../GoOffline.md?raw';
 
 const renderInline = (text, keyPrefix) => text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, index) => {
   if (part.startsWith('**')) return <strong key={`${keyPrefix}-${index}`}>{part.slice(2, -2)}</strong>;
