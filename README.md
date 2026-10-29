@@ -1,4 +1,4 @@
-# Telegram Chat Viewer
+# Telegram-Chat-Export-Reader
 
 A lightweight React app to view Telegram HTML and JSON exports locally, with rich formatting, media browsing, search and a Telegram-like UI.
 
