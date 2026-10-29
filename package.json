@@ -2,7 +2,7 @@
   "name": "telegram-chat-viewer",
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://EmerickGrimm.github.io/Telegram-Chat-Export-Reader",
+  "homepage": "https://Ultrafeel.github.io/Telegram-Chat-Export-Reader",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
