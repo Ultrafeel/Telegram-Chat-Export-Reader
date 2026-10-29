@@ -97,21 +97,21 @@ const EmptyState = ({ onLoadClick, loading, progress }) => {
         Load Telegram Export
       </button>
 
-      <details className="mt-8 mx-auto max-w-3xl rounded-lg border border-gray-200 bg-white p-4 text-left">
-        <summary className="cursor-pointer font-medium text-gray-900">Use this reader offline</summary>
-        <div className="mt-4 space-y-3 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
-          {renderGuide(offlineGuide)}
-        </div>
-      </details>
-      
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <div className="inline-flex items-start gap-3 text-left bg-green-50 p-4 rounded-lg max-w-md">
-          <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="font-medium text-green-900">100% Private & Local</p>
-            <p className="text-sm text-green-700 mt-1">All processing happens in your browser. Your data is never uploaded or stored anywhere.</p>
+        <details className="mx-auto max-w-3xl rounded-lg bg-green-50 p-4 text-left">
+          <summary className="cursor-pointer">
+            <span className="inline-flex items-start gap-3 align-top">
+              <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
+              <span>
+                <span className="block font-medium text-green-900">100% Private &amp; Local</span>
+                <span className="mt-1 block text-sm text-green-700">All processing happens in your browser. Your data is never uploaded or stored anywhere. If you want to verify this, you can switch the tab to Offline in Developer Tools, but it is not necessary. See the guide below.</span>
+              </span>
+            </span>
+          </summary>
+          <div className="mt-4 border-t border-green-200 pt-4 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
+            {renderGuide(offlineGuide)}
           </div>
-        </div>
+        </details>
       </div>
     </div>
   );
