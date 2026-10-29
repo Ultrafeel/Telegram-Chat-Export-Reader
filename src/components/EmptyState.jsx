@@ -1,5 +1,63 @@
 import React from 'react';
 import { Send, FolderOpen, Shield } from 'lucide-react';
+import offlineGuide from '../../GoOffline.md?raw';
+
+const renderInline = (text, keyPrefix) => text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, index) => {
+  if (part.startsWith('**')) return <strong key={`${keyPrefix}-${index}`}>{part.slice(2, -2)}</strong>;
+  if (part.startsWith('`')) return <code key={`${keyPrefix}-${index}`}>{part.slice(1, -1)}</code>;
+  return part;
+});
+
+const renderGuide = markdown => {
+  const lines = markdown.trim().split('\n');
+  const blocks = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    const line = lines[index].trim();
+    if (!line) {
+      index += 1;
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,2})\s+(.+)$/);
+    if (heading) {
+      const Heading = heading[1].length === 1 ? 'h1' : 'h2';
+      blocks.push(<Heading key={index}>{renderInline(heading[2], `heading-${index}`)}</Heading>);
+      index += 1;
+      continue;
+    }
+
+    const isOrderedList = /^\d+\.\s+/.test(line);
+    const isUnorderedList = /^-\s+/.test(line);
+    if (isOrderedList || isUnorderedList) {
+      const items = [];
+      while (index < lines.length) {
+        const item = lines[index].trim();
+        if (isOrderedList ? !/^\d+\.\s+/.test(item) : !/^-\s+/.test(item)) break;
+        items.push(item.replace(isOrderedList ? /^\d+\.\s+/ : /^-\s+/, ''));
+        index += 1;
+      }
+      const List = isOrderedList ? 'ol' : 'ul';
+      blocks.push(
+        <List key={`list-${index}`}>
+          {items.map((item, itemIndex) => <li key={itemIndex}>{renderInline(item, `list-${index}-${itemIndex}`)}</li>)}
+        </List>
+      );
+      continue;
+    }
+
+    const paragraph = [line];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !/^(#{1,2})\s+|^\d+\.\s+|^-\s+/.test(lines[index].trim())) {
+      paragraph.push(lines[index].trim());
+      index += 1;
+    }
+    blocks.push(<p key={`paragraph-${index}`}>{renderInline(paragraph.join(' '), `paragraph-${index}`)}</p>);
+  }
+
+  return blocks;
+};
 
 const EmptyState = ({ onLoadClick, loading, progress }) => {
   if (loading) {
@@ -38,6 +96,13 @@ const EmptyState = ({ onLoadClick, loading, progress }) => {
         <FolderOpen className="w-5 h-5" />
         Load Telegram Export
       </button>
+
+      <details className="mt-8 mx-auto max-w-3xl rounded-lg border border-gray-200 bg-white p-4 text-left">
+        <summary className="cursor-pointer font-medium text-gray-900">Как открыть экспорт офлайн</summary>
+        <div className="mt-4 space-y-3 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
+          {renderGuide(offlineGuide)}
+        </div>
+      </details>
       
       <div className="mt-12 pt-8 border-t border-gray-200">
         <div className="inline-flex items-start gap-3 text-left bg-green-50 p-4 rounded-lg max-w-md">
