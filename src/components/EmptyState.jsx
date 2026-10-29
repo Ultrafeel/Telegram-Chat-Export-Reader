@@ -98,20 +98,21 @@ const EmptyState = ({ onLoadClick, loading, progress }) => {
       </button>
 
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <details className="mx-auto max-w-3xl rounded-lg bg-green-50 p-4 text-left">
-          <summary className="cursor-pointer">
-            <span className="inline-flex items-start gap-3 align-top">
-              <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
-              <span>
-                <span className="block font-medium text-green-900">100% Private &amp; Local</span>
-                <span className="mt-1 block text-sm text-green-700">All processing happens in your browser. Your data is never uploaded or stored anywhere. If you want to verify this, you can switch the tab to Offline in Developer Tools, but it is not necessary. Click this section to view the offline guide.</span>
-              </span>
-            </span>
-          </summary>
-          <div className="mt-4 border-t border-green-200 pt-4 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
-            {renderGuide(offlineGuide)}
+        <div className="mx-auto max-w-3xl rounded-lg bg-green-50 p-4 text-left">
+          <div className="inline-flex items-start gap-3 align-top">
+            <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
+            <div>
+              <p className="font-medium text-green-900">100% Private &amp; Local</p>
+              <p className="mt-1 text-sm text-green-700">All processing happens in your browser. Your data is never uploaded or stored anywhere. If you want to verify this, you can switch the tab to Offline in Developer Tools, but it is not necessary.</p>
+              <details className="mt-2">
+                <summary className="cursor-pointer text-sm font-medium text-green-800 underline">Click here to view the offline guide.</summary>
+                <div className="mt-4 border-t border-green-200 pt-4 text-sm leading-6 text-gray-700 [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:mt-5 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-gray-900 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:py-0.5">
+                  {renderGuide(offlineGuide)}
+                </div>
+              </details>
+            </div>
           </div>
-        </details>
+        </div>
       </div>
     </div>
   );
