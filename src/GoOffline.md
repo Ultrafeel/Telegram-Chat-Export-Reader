@@ -25,6 +25,10 @@ Keep the media files in the original export folder structure so photos, videos, 
 
 This works as long as the app page is already open and loaded. If you close the tab or refresh while offline, reconnect and open the app again. You can still select and process the Telegram export while offline.
 
+## Firefox: switch the WHOLE browser to offline mode
+
+In the menu bar, choose File → Work Offline. On Windows/Linux, press `Alt` if the menu bar is hidden. Select the same option again to reconnect. Firefox may still display previously cached pages while offline. [howtogeek](https://www.howtogeek.com/263854/how-to-enable-offline-browsing-in-firefox/)
+
 # Как открыть Telegram-экспорт офлайн
 
 Приложение обрабатывает экспорт прямо в браузере: файлы чата не отправляются на сервер. Чтобы открыть экспорт без подключения к интернету, сначала загрузите приложение, затем отключите сеть для его вкладки и выберите папку экспорта.
