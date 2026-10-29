@@ -1,7 +1,19 @@
-import React from 'react';
-import { Upload, Moon, Sun, Download } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Upload, Moon, Sun, Download, Code, X } from 'lucide-react';
 
-const ChatHeader = ({ onExportHtml, chatTitle, chats, selectedChatIndex, onSelectChat, isLoading, isDarkMode, onToggleDarkMode, onLoadClick }) => {
+const ChatHeader = ({ onExportHtml, chatSourceJson, chatTitle, chats, selectedChatIndex, onSelectChat, isLoading, isDarkMode, onToggleDarkMode, onLoadClick }) => {
+  const [isChatJsonOpen, setIsChatJsonOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isChatJsonOpen) return;
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') setIsChatJsonOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isChatJsonOpen]);
+
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -31,6 +43,17 @@ const ChatHeader = ({ onExportHtml, chatTitle, chats, selectedChatIndex, onSelec
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {chatSourceJson && (
+            <button
+              type="button"
+              onClick={() => setIsChatJsonOpen(true)}
+              title="View chat JSON"
+              aria-label="View chat JSON"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200"
+            >
+              <Code className="h-4 w-4" aria-hidden="true" />
+            </button>
+          )}
           {onExportHtml && (
             <button
               onClick={onExportHtml}
@@ -60,6 +83,37 @@ const ChatHeader = ({ onExportHtml, chatTitle, chats, selectedChatIndex, onSelec
           </button>
         </div>
       </div>
+      {isChatJsonOpen && chatSourceJson && createPortal(
+        <div
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) setIsChatJsonOpen(false);
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="chat-source-title"
+            className="w-full max-w-3xl overflow-hidden rounded-md bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100"
+          >
+            <header className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+              <h2 id="chat-source-title" className="text-sm font-semibold">Chat JSON source</h2>
+              <button
+                type="button"
+                onClick={() => setIsChatJsonOpen(false)}
+                aria-label="Close chat JSON"
+                className="inline-flex h-8 w-8 items-center justify-center rounded text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </header>
+            <pre className="max-h-[75vh] overflow-auto p-4 text-xs leading-relaxed">
+              <code>{JSON.stringify(chatSourceJson, null, 2)}</code>
+            </pre>
+          </section>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

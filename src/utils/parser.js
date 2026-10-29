@@ -25,6 +25,8 @@ const renderJsonText = value => {
 
 export const parseJsonExport = async (data, files, chatIndex = 0) => {
   const chat = data.chats.list[chatIndex];
+  const chatSourceJsonCopy = { ...chat };
+  delete chatSourceJsonCopy.messages;
   const basePath = files.find(file => file.webkitRelativePath)?.webkitRelativePath?.split('/')[0] || '';
   const resolvePath = path => path ? findFileInFolder(files, basePath ? `${basePath}/${path}` : path) : null;
   const messages = await Promise.all((chat.messages || [])
@@ -97,6 +99,7 @@ export const parseJsonExport = async (data, files, chatIndex = 0) => {
   const byId = new Map(messages.map(message => [message.id.replace('message', ''), message]));
   return {
     title: chat.name || data.name || 'Chat',
+    sourceJson: chatSourceJsonCopy,
     messages: messages.map(message => message.replyTo && !message.replyTo.isAnotherChat && byId.has(String(message.replyTo.messageId))
       ? { ...message, replyTo: { ...message.replyTo, quotedMessage: byId.get(String(message.replyTo.messageId)) } }
       : message)

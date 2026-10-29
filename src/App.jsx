@@ -9,6 +9,7 @@ import { downloadStaticHtml } from './utils/exportHtml';
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [chatTitle, setChatTitle] = useState('');
+  const [chatSourceJson, setChatSourceJson] = useState(null);
   const [chatSelection, setChatSelection] = useState(null);
   const [showChatPicker, setShowChatPicker] = useState(false);
   const [selectedChatIndex, setSelectedChatIndex] = useState(null);
@@ -34,6 +35,7 @@ const App = () => {
     setLoading(true);
     setProgress(0);
     setMessages([]);
+    setChatSourceJson(null);
     setChatSelection(null);
     setShowChatPicker(false);
     setSelectedChatIndex(null);
@@ -63,6 +65,7 @@ const App = () => {
         if (chats.length === 1) {
           const parsed = await parseJsonExport(data, files, 0);
           setChatTitle(parsed.title);
+          setChatSourceJson(parsed.sourceJson);
           setMessages(parsed.messages);
         } else {
           setChatSelection({ data, files, chats });
@@ -134,6 +137,7 @@ const App = () => {
     try {
       const parsed = await parseJsonExport(chatSelection.data, chatSelection.files, chatIndex);
       setChatTitle(parsed.title);
+      setChatSourceJson(parsed.sourceJson);
       setMessages(parsed.messages);
       setShowChatPicker(false);
     } catch (error) {
@@ -148,6 +152,7 @@ const App = () => {
     <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col app-shell">
       <ChatHeader 
         onExportHtml={!showChatPicker && messages.some(m => m.sourceJson) ? () => downloadStaticHtml(chatTitle, messages) : null}
+        chatSourceJson={chatSourceJson}
         chatTitle={chatTitle} 
         chats={chatSelection?.chats}
         selectedChatIndex={selectedChatIndex}
