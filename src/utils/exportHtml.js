@@ -47,7 +47,10 @@ export const downloadStaticHtml = (title, messages) => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${(title || 'chat').replace(/[\\/:*?"<>|]+/g, '_')}.html`;
+  // Full-width look-alikes keep the whole chat name readable in the file name.
+  const fullWidth = { '\\': '＼', '/': '／', ':': '：', '*': '＊', '?': '？', '"': '＂', '<': '＜', '>': '＞', '|': '｜' };
+  const fileName = (title || 'chat').replace(/[\\/:*?"<>|]/g, c => fullWidth[c]).replace(/[\u0000-\u001f]+/g, ' ').trim().replace(/[. ]+$/, '');
+  a.download = `${fileName || 'chat'}.html`;
   a.click();
   URL.revokeObjectURL(url);
 };
